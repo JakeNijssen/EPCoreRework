@@ -1,8 +1,10 @@
-### Developer Information
+# EPCore - Reworked
+
+## Developer Information
 
 EPCore (Rework) is a core library that helps Developers efficiently and faster write their code for plugins to the prison server EmeraldPrison. This core will be continuously updated in order to keep up with the latest features and demand by players on the server.
 
-### Command System
+## Command System
 EPCore gives the Developer the ability to create commands in an easier and more straight forward way than previous systems. Here is an example that shows how to teleport a player:
 
 ```java
@@ -11,12 +13,12 @@ public class TeleportCommand extends Command {
 }
 ```
 
-### Database System
+## Database System
 EPCore has an advanced Database system that allows Developers to easily execute SQL statements, without having to edit your code because you missed a comma or something. Here is an example for creating a table with EPCore's SQL system. In order to execute database queries to your plugins own database, you will need to initialize the Database Manager in your plugin, along with an `SQL.yml` file.
 
 #### Setup
 
-You will need to create an `sql.yml` file in your plugins data folder, and then the  Database Manager should automatically be able to read it when initializing it.
+⋅⋅⋅You will need to create an `sql.yml` file in your plugins data folder, and then the  Database Manager should automatically be able to read it when initializing it.
 ```yaml
 # Two options here, either MySQL or SQLite (not case-sensitive)
 type: "MySQL"
