@@ -1,0 +1,16 @@
+# Two options here, either MySQL or SQLite (not case-sensitive)
+type: "MySQL"
+
+settings:
+  sqlite:
+    # The file created for the database. Adding the .db in the end is optional and doesn't really matter.
+    file-name: "database"
+    username: "username"
+    password: "password"
+  mysql:
+    # The database name for this plugin.
+    database: "database"
+    hostname: "127.0.0.1"
+    username: "username"
+    password: "password"
+    port: 3306
