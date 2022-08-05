@@ -18,7 +18,7 @@ EPCore has an advanced Database system that allows Developers to easily execute 
 
 #### Setup
 
-⋅⋅⋅You will need to create an `sql.yml` file in your plugins data folder, and then the  Database Manager should automatically be able to read it when initializing it.
+Create an `sql.yml` file in your plugins data folder, and then the  Database Manager should automatically be able to read it when initializing it.
 ```yaml
 # Two options here, either MySQL or SQLite (not case-sensitive)
 type: "MySQL"
@@ -57,4 +57,79 @@ public class Main extends JavaPlugin {
         // Now your Database Manager has been set up, and you can start executing queries using it.
     }
 }
+```
+#
+#### Creating Tables
+It is really simple creating a table with the new improved TableBuilder. The biggest difference is that we no longer have a unique class for each table. Instead, to create a table, use the TableBuilder like below: 
+
+```java
+TableBuilder.newTable("tableName", databaseManager)
+        .addColumn("columnName", SQLDataType.YOUR_DATA_TYPE, length, allowNull, SQLDefaultType.DEFAULT_TYPE, primary)
+        .build();
+```
+
+A working example using this TableBuilder:
+```java
+TableBuilder.newTable("users", this)
+        .addColumn("uuid", SQLDataType.VARCHAR, 32, false, SQLDefaultType.NO_DEFAULT, true)
+        .addColumn("name", SQLDataType.VARCHAR, 100, false, SQLDefaultType.NO_DEFAULT, false)
+        .build();
+```
+
+There are currently four different SQLDefaultTypes, and those are
+- `NO_DEFAULT` - no default at all.
+- `AUTO_INCREMENT` - will make this column an auto increment column.
+- `NULL` - will set the default to null for this column.
+- `CUSTOM` - custom default value. You can set the value with SQLDefaultType.CUSTOM.setCustom(value)
+#
+
+#### Updating Tables
+This code can be used by Developers to update a table:
+```java
+// Specify the data to update, so each entry's represents the column we want to update, and the value is the 
+// new value we want to set it to.
+HashMap<String, Object> data = new HashMap<>() {{
+    put("key", value);
+    put("key", value);
+}};
+
+databaseManager.update(
+        "tableName",
+        data,
+        // The WHERE data, so basically for each entry, it translates to WHERE KEY=VALUE AND KEY=VALUE etc... 
+        new HashMap<>() {{
+            put("key", value);
+            put("key", value);
+        }}
+);
+```
+#
+#### Inserting into Tables
+This code can be used by Developers to insert data into a table.
+This will return true if it successfully inserted the data, otherwise false. For example, it will return false if there is already an entry with this primary key.
+
+```java
+// Specify the data to insert, here we specify all the values for each columns, where each entry contains the key
+// and the value for the column.
+HashMap<String, Object> data = new HashMap<>() {{
+    put("key", value);
+    put("key", value);
+}};
+
+boolean successfullyInserted = databaseManager.insert("tableName", data);
+```
+
+#
+#### Removing from Tables
+This code can be used by Developers to remove data from a table.
+This will return true if it successfully removed the data, otherwise false. For example, it will return false if there is no data with the specified where data.
+
+```java
+// The WHERE data, so basically for each entry, it translates to WHERE KEY=VALUE AND KEY=VALUE etc...
+HashMap<String, Object> whereData = new HashMap<>() {{
+    put("key", value);
+    put("key", value);
+}};
+
+boolean successfullyInserted = databaseManager.insert("tableName", whereData);
 ```
