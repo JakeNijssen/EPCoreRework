@@ -131,5 +131,5 @@ HashMap<String, Object> whereData = new HashMap<>() {{
     put("key", value);
 }};
 
-boolean successfullyInserted = databaseManager.insert("tableName", whereData);
+boolean successfullyRemoved = databaseManager.remove("tableName", whereData);
 ```
