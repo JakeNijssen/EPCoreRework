@@ -1,0 +1,10 @@
+settings:
+  private-messages:
+    toggle-message: "DMs"
+    display-name: "&9Private Messages"
+    description:
+      - "&7Whether you want private messages enabled."
+
+    # If the player should have to confirm enabling/disabling this setting.
+    confirmation: false
+    defaultEnabled: true

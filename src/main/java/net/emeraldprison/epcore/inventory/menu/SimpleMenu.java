@@ -1,8 +1,11 @@
 package net.emeraldprison.epcore.inventory.menu;
 
 import lombok.Getter;
+import lombok.Setter;
 import net.emeraldprison.epcore.EPCore;
+import net.emeraldprison.epcore.inventory.utilities.AnimationType;
 import net.emeraldprison.epcore.inventory.utilities.InventorySize;
+import net.emeraldprison.epcore.users.object.CoreUser;
 import net.emeraldprison.epcore.utilities.Utilities;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -39,6 +42,9 @@ public class SimpleMenu implements InventoryHolder {
     private final Player player;
     private final Inventory inventory;
 
+    @Setter
+    private AnimationType snakeType;
+
     public SimpleMenu(@NotNull Player player, InventorySize size) {
         this(player, size, InventoryType.CHEST.getDefaultTitle());
     }
@@ -68,15 +74,16 @@ public class SimpleMenu implements InventoryHolder {
         }
 
         populate();
-
-        Bukkit.getScheduler().runTaskTimer(
-                EPCore.getPlugin(),
-                this::populate,
-                0L, 1L
-        );
     }
 
-    protected void populate() {}
+    public void populate() {
+        this.inventory.clear();
+
+        if (snakeType != null) {
+            int[] slots = snakeType == AnimationType.BORDERS ? getBorders() : getCorners();
+            int snakeLength = slots.length;
+        }
+    }
 
     protected void onOpen(InventoryOpenEvent event) {}
 
@@ -86,6 +93,10 @@ public class SimpleMenu implements InventoryHolder {
 
     public void open() {
         player.openInventory(getInventory());
+    }
+
+    public CoreUser getCoreUser() {
+        return EPCore.getPlugin().getUserHandler().getUser(player);
     }
 
     public ItemStack getItem(int slot) {
@@ -150,7 +161,7 @@ public class SimpleMenu implements InventoryHolder {
 
     public void fillBackground(@NotNull ItemStack itemStack) {
         for (int index = 0; index < inventory.getSize(); index++) {
-            if (getItem(index).getType() == Material.AIR) {
+            if (getItem(index) == null || getItem(index).getType() == Material.AIR) {
                 setItem(index, itemStack);
             }
         }

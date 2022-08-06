@@ -20,12 +20,12 @@ public class EPCoreLogger {
 
         String text = "";
         switch (level) {
-            case DEBUG -> text += ChatColor.YELLOW + "[DEBUG] ➔";
-            case ERROR -> text += ChatColor.RED + "[ERROR] ➔";
-            case FATAL -> text += ChatColor.RED + "[FATAL] ➔";
-            case INFO -> text += ChatColor.WHITE + "[INFO] ➔";
-            case WARN -> text += ChatColor.GOLD + "[WARN] ➔";
-            case SUCCESS -> text += ChatColor.GREEN + "[SUCCESS] ➔";
+            case DEBUG -> text += ChatColor.YELLOW + "[DEBUG] >";
+            case ERROR -> text += ChatColor.RED + "[ERROR] >";
+            case FATAL -> text += ChatColor.RED + "[FATAL] >";
+            case INFO -> text += ChatColor.WHITE + "[INFO] >";
+            case WARN -> text += ChatColor.GOLD + "[WARN] >";
+            case SUCCESS -> text += ChatColor.GREEN + "[SUCCESS] >";
             default -> text += "";
         }
 

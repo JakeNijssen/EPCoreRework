@@ -85,7 +85,7 @@ public class DatabaseManager {
         // Generate Default Tables
         // This should not be executed by any other plugins than the core.
         TableBuilder.newTable("users", this)
-                .addColumn("uuid", SQLDataType.VARCHAR, 32, false, SQLDefaultType.NO_DEFAULT, true)
+                .addColumn("uuid", SQLDataType.VARCHAR, 36, false, SQLDefaultType.NO_DEFAULT, true)
                 .addColumn("name", SQLDataType.VARCHAR, 100, false, SQLDefaultType.NO_DEFAULT, false)
                 .build();
     }
@@ -112,17 +112,16 @@ public class DatabaseManager {
 
             query.append(" WHERE ");
 
-            List<Map.Entry<String, Object>> entries = new ArrayList<>(whereData.entrySet());
-            for (int index = 0; index < entries.size(); index++) {
-                Map.Entry<String, Object> entry = entries.get(index);
-                if (index > 0) {
+            int currentEntryIndex = 1;
+            for (Map.Entry<String, Object> whereEntry : whereData.entrySet()) {
+                if (currentEntryIndex > 0) {
                     query.append(" AND ");
                 }
 
-                query.append("`").append(entry.getKey()).append("`").append("=?");
-                indexed.put(index, entry.getValue());
+                query.append("`").append(whereEntry.getKey()).append("`").append("=?");
+                indexed.put(currentEntryIndex, whereEntry.getValue());
 
-                index++;
+                currentEntryIndex++;
             }
 
             try (Connection connection = sqlService.getConnection()) {
@@ -265,8 +264,8 @@ public class DatabaseManager {
             }
             return true;
         }catch (SQLException exception) {
-            EPCore.getPlugin().getCoreLogger().log(LogLevel.WARN, "Error executing SQL update statement with following message: " + exception.getMessage());
-            exception.printStackTrace();
+            // EPCore.getPlugin().getCoreLogger().log(LogLevel.WARN, "Error executing SQL update statement with following message: " + exception.getMessage());
+            // exception.printStackTrace();
             return false;
         }
     }
@@ -277,17 +276,19 @@ public class DatabaseManager {
             StringBuilder sqlQuery = new StringBuilder(prefix + " ep_" + tableName + " ("),
                     values = new StringBuilder(") VALUES(");
 
-            List<String> dataKeys = new ArrayList<>(data.keySet());
-            for (int keyIndex = 1; keyIndex < data.keySet().size() + 1; keyIndex++) {
-                if (keyIndex > 1) {
+
+            int currentKeyIndex = 1;
+            for (String dataKey : data.keySet()) {
+                if (currentKeyIndex > 1) {
                     sqlQuery.append(", ");
                     values.append(", ");
                 }
 
-                sqlQuery.append("`").append(dataKeys.get(keyIndex)).append("`");
+                sqlQuery.append("`").append(dataKey).append("`");
                 values.append("?");
 
-                indexedValues.put(keyIndex, data.get(dataKeys.get(keyIndex)));
+                indexedValues.put(currentKeyIndex, data.get(dataKey));
+                currentKeyIndex++;
             }
 
             values.append(")");
@@ -312,8 +313,8 @@ public class DatabaseManager {
                 return true;
             }
         } catch (SQLException exception) {
-            EPCore.getPlugin().getCoreLogger().log(LogLevel.WARN, "Error executing SQL statement with following message: " + exception.getMessage());
-            exception.printStackTrace();
+            // EPCore.getPlugin().getCoreLogger().log(LogLevel.WARN, "Error executing SQL statement with following message: " + exception.getMessage());
+            // exception.printStackTrace();
             return false;
         }
     }

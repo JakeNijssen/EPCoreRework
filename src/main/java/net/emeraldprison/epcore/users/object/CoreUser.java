@@ -1,12 +1,15 @@
 package net.emeraldprison.epcore.users.object;
 
 import lombok.Getter;
+import lombok.Setter;
 import net.emeraldprison.epcore.EPCore;
 import net.emeraldprison.epcore.api.events.user.UserLoadEvent;
+import net.emeraldprison.epcore.settings.Setting;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
 import java.util.UUID;
 
 @Getter
@@ -17,6 +20,9 @@ public class CoreUser {
 
     private boolean loaded;
     private boolean ableToLoad;
+
+    @Setter
+    private Map<Setting, Boolean> settings;
 
     private UserLoadEvent.UserLoadType loadType;
 
@@ -43,6 +49,7 @@ public class CoreUser {
             return;
         }
 
+        EPCore.getPlugin().getSettingsHandler().saveSettingsForUser(this);
         EPCore.getPlugin().getUserHandler().updateUserTable(getPlayer(), this);
         EPCore.getPlugin().getUserHandler().getUsers().remove(uuid);
     }

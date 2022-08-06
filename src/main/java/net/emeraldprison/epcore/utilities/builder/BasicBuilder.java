@@ -60,6 +60,13 @@ public abstract class BasicBuilder<B extends BasicBuilder<B>> {
         return this.getThis();
     }
 
+    public B addLore(String line) {
+        if (itemMeta == null) return this.getThis();
+        List<String> currentLore = itemMeta.getLore();
+        currentLore.add(Utilities.translate(line));
+        return setLore(currentLore);
+    }
+
     public B setLore(List<String> lore) {
         if (itemMeta == null) return this.getThis();
         itemMeta.setLore(Utilities.translate(lore));

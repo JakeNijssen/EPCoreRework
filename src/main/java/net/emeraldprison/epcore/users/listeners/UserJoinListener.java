@@ -2,12 +2,15 @@ package net.emeraldprison.epcore.users.listeners;
 
 import net.emeraldprison.epcore.EPCore;
 import net.emeraldprison.epcore.api.events.user.UserLoadEvent;
+import net.emeraldprison.epcore.settings.Setting;
 import net.emeraldprison.epcore.users.UserHandler;
 import net.emeraldprison.epcore.users.object.CoreUser;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+
+import java.util.Map;
 
 public class UserJoinListener implements Listener {
 
@@ -25,11 +28,16 @@ public class UserJoinListener implements Listener {
                         coreUser = userHandler.createCoreUser(userHandler.loadFromUUID(event.getUniqueId()), true);
                         if (coreUser == null) {
                             // User is still null, which means it doesn't exist in the database, so it's a new player connecting.
+                            Map<Setting, Boolean> settings = EPCore.getPlugin().getSettingsHandler()
+                                    .retrieveSettings(event.getUniqueId());
+
                             coreUser = new CoreUser(
                                     event.getUniqueId(),
                                     event.getName(),
                                     UserLoadEvent.UserLoadType.NEW
                             );
+
+                            coreUser.setSettings(settings);
 
                             CoreUser finalUser = coreUser;
                             Bukkit.getScheduler().runTask(EPCore.getPlugin(), () -> {
@@ -43,6 +51,7 @@ public class UserJoinListener implements Listener {
                                 EPCore.getPlugin().getServer().getPluginManager().callEvent(userLoadEvent);
                             });
                         }
+
                     }
                 }
         );

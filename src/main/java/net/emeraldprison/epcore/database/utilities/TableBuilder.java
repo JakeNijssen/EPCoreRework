@@ -56,7 +56,7 @@ public class TableBuilder {
 
         // Primary key
         if (primary) {
-            this.specs += "PRIMARY KEY";
+            this.specs += " PRIMARY KEY";
         }
 
         // Support for multiple columns (could be useful ig)
@@ -70,7 +70,7 @@ public class TableBuilder {
         // Execute SQL Query
         try {
             if (!this.databaseManager.getResults(null,
-                    "information.schema.COLUMNS",
+                    "information_schema.COLUMNS",
                     "COLUMN_NAME=? AND TABLE_NAME=? AND TABLE_SCHEMA=?",
                     new HashMap<>() {{
                         put(1, columnName);

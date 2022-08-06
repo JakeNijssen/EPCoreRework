@@ -1,5 +1,8 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id 'java'
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 group = 'net.emeraldprison'
@@ -28,9 +31,20 @@ dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.19-R0.1-SNAPSHOT'
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
 
-    implementation group: 'com.zaxxer', name: 'HikariCP', version: '2.3.2'
+    implementation 'com.zaxxer:HikariCP:5.0.1'
 
     annotationProcessor 'org.projectlombok:lombok:1.18.20'
+}
+
+
+tasks {
+    shadowJar {
+        relocate 'com.zaxxer', 'net.emeraldprison.epcore.libs.com.zaxxer'
+    }
+
+    build {
+        dependsOn(shadowJar)
+    }
 }
 
 def targetJavaVersion = 17

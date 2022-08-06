@@ -1,0 +1,6 @@
+items:
+  close:
+    type: 'org.bukkit.inventory.ItemStack'
+    material: "BARRIER"
+    amount: 1
+    name: "&cClose"

@@ -1,6 +1,8 @@
 package net.emeraldprison.epcore.settings;
 
 import net.emeraldprison.epcore.EPCore;
+import net.emeraldprison.epcore.configuration.Configuration;
+import net.emeraldprison.epcore.configuration.serializer.styling.NameStyle;
 import net.emeraldprison.epcore.database.utilities.SQLDataType;
 import net.emeraldprison.epcore.database.utilities.SQLDefaultType;
 import net.emeraldprison.epcore.database.utilities.TableBuilder;
@@ -8,9 +10,11 @@ import net.emeraldprison.epcore.users.object.CoreUser;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Statistic;
+import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.sql.ResultSet;
 import java.util.*;
 
@@ -21,17 +25,45 @@ public class SettingsHandler {
     private final Map<String, Setting> settings = new HashMap<>();
     private final Map<UUID, LinkedHashMap<Setting, Boolean>> playerSettingValue = new HashMap<>();
 
+    private final Configuration settingsConfiguration;
+
     public SettingsHandler(@NotNull EPCore core) {
         this.core = core;
+        this.settingsConfiguration = new Configuration(core, new File(core.getDataFolder(), "settings.yml"), NameStyle.HYPHEN, true);
     }
 
     public boolean setup() {
         TableBuilder.newTable("settings", core.getDatabaseManager())
-                .addColumn("uuid", SQLDataType.VARCHAR, 32, false, SQLDefaultType.NO_DEFAULT, true)
+                .addColumn("uuid", SQLDataType.VARCHAR, 36, false, SQLDefaultType.NO_DEFAULT, true)
                 .addColumn("setting", SQLDataType.VARCHAR, 100, false, SQLDefaultType.NO_DEFAULT, false)
-                .addColumn("value", SQLDataType.BIT, -1, true, SQLDefaultType.NO_DEFAULT, false)
+                .addColumn("value", SQLDataType.INTEGER, -1, true, SQLDefaultType.NO_DEFAULT, false)
                 .build();
+
+        loadSettings();
         return true;
+    }
+
+    public void loadSettings() {
+        ConfigurationSection section = settingsConfiguration.getConfigurationSection("settings");
+        if (section == null) {
+            throw new RuntimeException("Tried to load settings from settings.yml, but the section 'settings' could not be found.");
+        }
+
+        List<Setting> settings = new ArrayList<>();
+        for (String configSetting : section.getKeys(false)) {
+            ConfigurationSection settingSection = section.getConfigurationSection(configSetting);
+            if (settingSection == null)
+                continue;
+
+            String displayName = settingSection.getString("display-name");
+            List<String> description = settingSection.getStringList("description");
+            boolean confirmation = settingSection.getBoolean("confirmation");
+            boolean defaultEnabled = settingSection.getBoolean("defaultEnabled");
+
+            settings.add(new Setting(configSetting, displayName, description, confirmation, defaultEnabled));
+        }
+
+        settings.forEach(setting -> this.settings.put(setting.getName(), setting));
     }
 
     public Map<Setting, Boolean> retrieveSettings(UUID uuid) {
@@ -66,18 +98,18 @@ public class SettingsHandler {
         Bukkit.getScheduler().runTaskAsynchronously(
                 EPCore.getPlugin(),
                 () -> {
-                    settings.values().forEach(setting -> {
+                    user.getSettings().keySet().forEach(setting -> {
                         HashMap<String, Object> data = new HashMap<>() {{
                             put("uuid", user.getUuid().toString());
                             put("setting", setting.getName());
-                            put("value", getValue(user.getUuid(), setting));
+                            put("value", getValue(user, setting));
                         }};
 
                         if (!EPCore.getPlugin().getDatabaseManager().insert("settings", data)) {
                             EPCore.getPlugin().getDatabaseManager().update(
                                     "settings",
                                     new HashMap<>() {{
-                                        put("value", getValue(user.getUuid(), setting));
+                                        put("value", getValue(user, setting));
                                     }},
                                     new HashMap<>() {{
                                         put("uuid", user.getUuid().toString());
@@ -90,8 +122,20 @@ public class SettingsHandler {
         );
     }
 
-    public boolean getValue(@NotNull UUID uuid, @NotNull Setting setting) {
-        LinkedHashMap<Setting, Boolean> settings = playerSettingValue.get(uuid);
-        return settings.getOrDefault(setting, setting.isDefaultEnabled());
+    public boolean getValue(@NotNull CoreUser user, @NotNull Setting setting) {
+        return user.getSettings().getOrDefault(setting, setting.isDefaultEnabled());
+    }
+
+    public boolean getValue(@NotNull CoreUser user, @NotNull String settingName) {
+        Setting setting = settings.get(settingName);
+        if (setting != null) {
+            return user.getSettings().get(setting);
+        }
+
+        return false;
+    }
+
+    public void setValue(@NotNull CoreUser user, @NotNull Setting setting, boolean newValue) {
+        user.getSettings().put(setting, newValue);
     }
 }

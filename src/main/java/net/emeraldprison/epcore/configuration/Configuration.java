@@ -38,6 +38,9 @@ public class Configuration extends YamlConfiguration {
 
         this.cache = new HashMap<>();
         this.comments = new HashMap<>();
+
+        copyDefaultConfig();
+        load();
     }
 
     @Override
@@ -69,10 +72,26 @@ public class Configuration extends YamlConfiguration {
         serializer.serialize(path, value, this);
     }
 
-    @Nullable
-    @Override
-    public Object get(@NotNull String path) {
-        return this.cache.containsKey(path) ? this.cache.get(path) : super.get(path);
+    public <T> T get(@NotNull String path, Class<T> type) {
+        String classPath = getString(path + ".type");
+        Class<?> clazz;
+
+        try {
+            clazz = Class.forName(classPath);
+        } catch (ClassNotFoundException exception) {
+            throw new RuntimeException("An error occurred while deserializing class '" + classPath + "'", exception);
+        }
+
+        if (clazz != type) {
+            throw new RuntimeException("An error occurred while deserializing class '" + classPath + "'");
+        }
+
+        Serializer<T> serializer = Serializers.of(type);
+        if (serializer == null) {
+            throw new UnsupportedOperationException("Missing Serializer for type: " + type);
+        }
+
+        return serializer.deserialize(path, this);
     }
 
     @NotNull

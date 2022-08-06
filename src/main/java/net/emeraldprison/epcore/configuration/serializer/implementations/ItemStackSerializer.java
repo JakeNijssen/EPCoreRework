@@ -36,7 +36,6 @@ public class ItemStackSerializer extends Serializer<ItemStack> {
             return;
         }
 
-        itemMeta.getDisplayName();
         configuration.set(path + ".name", itemMeta.getDisplayName().replace("§", "&"));
 
         if (itemMeta.getLore() != null && itemMeta.getLore().size() != 0) {

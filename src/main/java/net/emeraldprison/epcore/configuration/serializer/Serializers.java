@@ -4,6 +4,8 @@ import net.emeraldprison.epcore.configuration.serializer.implementations.ItemSta
 import net.emeraldprison.epcore.configuration.serializer.implementations.LocationSerializer;
 import net.emeraldprison.epcore.configuration.serializer.implementations.UniversalArraySerializer;
 import net.emeraldprison.epcore.configuration.serializer.implementations.UniversalObjectSerializer;
+import org.bukkit.Location;
+import org.bukkit.inventory.ItemStack;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
@@ -17,8 +19,8 @@ public class Serializers {
     private static final Serializer UNIVERSAL_OBJECT_SERIALIZER = new UniversalObjectSerializer();
 
     static {
-        register(LocationSerializer.class, new LocationSerializer());
-        register(ItemStackSerializer.class, new ItemStackSerializer());
+        register(Location.class, new LocationSerializer());
+        register(ItemStack.class, new ItemStackSerializer());
     }
 
     public static <T> Serializer<T> of(Class<T> clazz) {

@@ -3,6 +3,7 @@ package net.emeraldprison.epcore.users;
 import lombok.Getter;
 import net.emeraldprison.epcore.EPCore;
 import net.emeraldprison.epcore.api.events.user.UserLoadEvent;
+import net.emeraldprison.epcore.settings.Setting;
 import net.emeraldprison.epcore.users.listeners.UserJoinListener;
 import net.emeraldprison.epcore.users.listeners.UserQuitListener;
 import net.emeraldprison.epcore.users.object.CoreUser;
@@ -23,10 +24,6 @@ public class UserHandler {
     public UserHandler(@NotNull EPCore core) {
         this.core = core;
 
-        core.registerListeners(
-                new UserJoinListener(),
-                new UserQuitListener()
-        );
     }
 
     public Collection<CoreUser> getOnlineUsers() {
@@ -111,12 +108,20 @@ public class UserHandler {
 
         try {
             if (resultSet.next()) {
-                return new CoreUser(
-                        UUID.fromString(resultSet.getString("uuid")),
+                UUID uuid = UUID.fromString(resultSet.getString("uuid"));
+
+                Map<Setting, Boolean> settings = EPCore.getPlugin().getSettingsHandler()
+                        .retrieveSettings(uuid);
+
+                CoreUser coreUser = new CoreUser(
+                        uuid,
                         resultSet.getString("name"),
                         UserLoadEvent.UserLoadType.RETRIEVED_FROM_DATABASE,
                         save
                 );
+
+                coreUser.setSettings(settings);
+                return coreUser;
             }
         } catch (SQLException exception) {
             exception.printStackTrace();

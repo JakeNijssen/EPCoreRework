@@ -1,5 +1,6 @@
 package net.emeraldprison.epcore.configuration.serializer.implementations;
 
+import jdk.dynalink.linker.support.TypeUtilities;
 import net.emeraldprison.epcore.EPCore;
 import net.emeraldprison.epcore.configuration.Configuration;
 import net.emeraldprison.epcore.configuration.serializer.Serializer;
@@ -11,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 
 public class UniversalObjectSerializer extends Serializer<Serializable> {
@@ -55,7 +57,52 @@ public class UniversalObjectSerializer extends Serializer<Serializable> {
 
     @Override
     public Serializable deserialize(@NotNull String path, @NotNull Configuration configuration) {
-        return null;
+        String classPath = configuration.getString(path + ".type");
+        Class<?> clazz;
+
+        try {
+            clazz = Class.forName(classPath);
+        } catch (ClassNotFoundException exception) {
+            throw new RuntimeException("An error occurred while deserializing class '" + classPath + "'", exception);
+        }
+
+        validateDefaultConstructor(clazz);
+        if (!Serializable.class.isAssignableFrom(clazz)) {
+            throw new RuntimeException("Class with classpath '" + classPath + "' does not implement Serializable");
+        }
+
+        Serializable instance;
+        try {
+            instance = (Serializable) clazz.getConstructor().newInstance();
+        } catch (InstantiationException | NoSuchMethodException | IllegalAccessException | InvocationTargetException exception) {
+            throw new RuntimeException("An error occurred while deserializing class '" + classPath + "'", exception);
+        }
+
+        try {
+            for (Field field : clazz.getDeclaredFields()) {
+                if (Modifier.isStatic(field.getModifiers()) || Modifier.isTransient(field.getModifiers())) {
+                    continue;
+                }
+
+                field.setAccessible(true);
+
+                Class<?> type = field.getType();
+                if (ReflectionUtilities.isSimpleType(type)) {
+                    field.set(instance, configuration.get(path + "." + configuration.getNameStyle().format(field.getName())));
+                } else {
+                    Serializer<?> serializer = Serializers.of(field.getType());
+                    if (serializer == null) {
+                        throw new UnsupportedOperationException("Missing Serializer for type: " + field.getType());
+                    }
+
+                    field.set(instance, serializer.deserialize(path + "." + configuration.getNameStyle().format(field.getName()), configuration));
+                }
+            }
+        } catch (IllegalAccessException exception) {
+            exception.printStackTrace();
+        }
+
+        return instance;
     }
 
     private void validateDefaultConstructor(Class<?> clazz) {

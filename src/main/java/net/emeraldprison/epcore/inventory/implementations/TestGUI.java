@@ -1,4 +1,4 @@
-package net.emeraldprison.epcore.inventory.ïmplementations;
+package net.emeraldprison.epcore.inventory.implementations;
 
 import net.emeraldprison.epcore.inventory.menu.SimpleMenu;
 import net.emeraldprison.epcore.inventory.utilities.InventorySize;
@@ -9,8 +9,6 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.function.Predicate;
 
 public class TestGUI extends SimpleMenu {
 
@@ -28,7 +26,7 @@ public class TestGUI extends SimpleMenu {
     }
 
     @Override
-    protected void populate() {
+    public void populate() {
         super.populate();
 
         ItemStack itemStack = ItemBuilder.item(Material.GRASS_BLOCK)

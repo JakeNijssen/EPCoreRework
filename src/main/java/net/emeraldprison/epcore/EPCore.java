@@ -6,11 +6,15 @@ import net.emeraldprison.epcore.configuration.Configuration;
 import net.emeraldprison.epcore.configuration.serializer.styling.NameStyle;
 import net.emeraldprison.epcore.database.DatabaseManager;
 import net.emeraldprison.epcore.economy.EconomyHandler;
+import net.emeraldprison.epcore.inventory.InventoryHandler;
 import net.emeraldprison.epcore.inventory.listener.InventoryListener;
 import net.emeraldprison.epcore.inventory.menu.SimpleMenu;
 import net.emeraldprison.epcore.inventory.utilities.InventorySize;
 import net.emeraldprison.epcore.settings.SettingsHandler;
+import net.emeraldprison.epcore.settings.inventory.SettingsGUI;
 import net.emeraldprison.epcore.users.UserHandler;
+import net.emeraldprison.epcore.users.listeners.UserJoinListener;
+import net.emeraldprison.epcore.users.listeners.UserQuitListener;
 import net.emeraldprison.epcore.utilities.builder.ItemBuilder;
 import net.emeraldprison.epcore.utilities.logging.EPCoreLogger;
 import net.emeraldprison.epcore.utilities.logging.LogLevel;
@@ -35,10 +39,12 @@ public final class EPCore extends JavaPlugin {
     private final DatabaseManager databaseManager = new DatabaseManager(this);
     private final EconomyHandler economyHandler = new EconomyHandler(this);
     private final SettingsHandler settingsHandler = new SettingsHandler(this);
+    private final InventoryHandler inventoryHandler = new InventoryHandler(this);
     private final UserHandler userHandler = new UserHandler(this);
 
     // Configuration
     private final Configuration configuration = new Configuration(this, new File(getDataFolder(), "config.yml"), NameStyle.HYPHEN, true);
+    private final Configuration sqlConfig = new Configuration(this, new File(getDataFolder(), "sql.yml"), NameStyle.HYPHEN, false);
 
     public EPCore() {
         instance = this;
@@ -68,13 +74,28 @@ public final class EPCore extends JavaPlugin {
             return;
         }
 
+        if (!inventoryHandler.setup()) {
+            getCoreLogger().log(LogLevel.FATAL, "Settings Manager failed to set up for EPCore, disabling...");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
 
         // Load all the default tables.
         databaseManager.loadDefaultTables();
 
         registerListeners(
-                new InventoryListener(this)
+                new InventoryListener(this),
+                new UserJoinListener(),
+                new UserQuitListener()
         );
+
+        getCommand("settings").setExecutor((sender, command, label, args) -> {
+            SettingsGUI settingsGUI = new SettingsGUI((Player) sender);
+            settingsGUI.open();
+
+            return true;
+        });
     }
 
     @Override

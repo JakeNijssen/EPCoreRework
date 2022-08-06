@@ -30,12 +30,15 @@ public record InventoryListener(@NotNull EPCore core) implements Listener {
     public void onInventoryOpen(InventoryOpenEvent event) {
         if (event.getInventory().getHolder() instanceof SimpleMenu simpleMenu) {
             simpleMenu.handleOpen(event);
+
+            core.getInventoryHandler().addInventory(simpleMenu);
         }
     }
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
         if (event.getInventory().getHolder() instanceof SimpleMenu simpleMenu) {
+            core.getInventoryHandler().removeInventory(simpleMenu);
             if (simpleMenu.handleClose(event)) {
                 core.getServer().getScheduler().runTask(
                         core,
