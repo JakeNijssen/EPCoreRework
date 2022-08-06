@@ -1,5 +1,6 @@
 package net.emeraldprison.epcore.configuration.serializer;
 
+import net.emeraldprison.epcore.configuration.serializer.implementations.ItemStackSerializer;
 import net.emeraldprison.epcore.configuration.serializer.implementations.LocationSerializer;
 import net.emeraldprison.epcore.configuration.serializer.implementations.UniversalArraySerializer;
 import net.emeraldprison.epcore.configuration.serializer.implementations.UniversalObjectSerializer;
@@ -17,6 +18,7 @@ public class Serializers {
 
     static {
         register(LocationSerializer.class, new LocationSerializer());
+        register(ItemStackSerializer.class, new ItemStackSerializer());
     }
 
     public static <T> Serializer<T> of(Class<T> clazz) {

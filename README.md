@@ -16,6 +16,7 @@ public class TeleportCommand extends Command {
 ## Database System
 EPCore has an advanced Database system that allows Developers to easily execute SQL statements, without having to edit your code because you missed a comma or something. Here is an example for creating a table with EPCore's SQL system. In order to execute database queries to your plugins own database, you will need to initialize the Database Manager in your plugin, along with an `SQL.yml` file.
 
+#
 #### Setup
 
 Create an `sql.yml` file in your plugins data folder, and then the  Database Manager should automatically be able to read it when initializing it.
@@ -132,4 +133,57 @@ HashMap<String, Object> whereData = new HashMap<>() {{
 }};
 
 boolean successfullyRemoved = databaseManager.remove("tableName", whereData);
+```
+
+## Configuration
+
+EPCore contains a new Configuration (moving away from JSON) which uses YAML file and its own custom serializers. To initialize the custom configuration for a file, you will need to create a new Configuration instance, as shown below.
+```java
+private Configuration configuration = new Configuration(this, new File(getDataFolder(), "config.yml"), NameStyle.HYPHEN, true);
+```
+The arguments for the Configuration class is:
+- `owningPlugin` - the main class (extending JavaPlugin) for your plugin
+- `file` - the file to create a configuration class for
+- `nameStyle` - the NameStyle for all the fields created, check out [The NameStyle class](https://github.com/Wolfeii/EPCore/blob/master/src/main/java/net/emeraldprison/epcore/configuration/serializer/styling/NameStyle.java)
+- `automaticColorStrings` - whether we should automatically translate all color codes (&1, &2, etc...) and HEX color codes.
+#
+#### Serializers
+This new Configuration system uses its own serializers in order to serialize special class that isn't simple types (long, int, boolean, etc...). The built in serializers are:
+- `Location.class`
+- `ItemStack.class`
+
+#
+#### Creating your own Serializer
+Change `Type` to the class you want to serialize.
+
+```java
+@SuppressWarnings("unchecked")
+public class TypeSerializer extends Serializer<Type> {
+    @Override
+    public void saveObject(@NotNull String path, @NotNull Type object, @NotNull Configuration configuration) {
+        // Save your data to the path.
+        configuration.set(path + ".something", object.getSomething());
+    }
+
+    @Override
+    public Type deserialize(@NotNull String path, @NotNull Configuration configuration) {
+        // You have the path, now recreate your object with your information
+        
+        ConfigurationSection section = configuration.getConfigurationSection(path);
+        return new Type(section.getString("something"));
+    }
+}
+```
+
+Now you have successfully created your serializer, to register it, you just need to do this simple code:
+```java
+Serializers.register(TypeSerializer.class, new TypeSerializer());
+```
+
+That's everything, your serializer will automatically be used when you try to do `configuraton.set(path, typeObject);`.
+
+## Menus / GUIs
+
+```java
+
 ```

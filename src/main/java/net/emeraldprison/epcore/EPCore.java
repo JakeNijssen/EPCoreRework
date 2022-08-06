@@ -9,6 +9,7 @@ import net.emeraldprison.epcore.economy.EconomyHandler;
 import net.emeraldprison.epcore.inventory.listener.InventoryListener;
 import net.emeraldprison.epcore.inventory.menu.SimpleMenu;
 import net.emeraldprison.epcore.inventory.utilities.InventorySize;
+import net.emeraldprison.epcore.settings.SettingsHandler;
 import net.emeraldprison.epcore.users.UserHandler;
 import net.emeraldprison.epcore.utilities.builder.ItemBuilder;
 import net.emeraldprison.epcore.utilities.logging.EPCoreLogger;
@@ -33,6 +34,7 @@ public final class EPCore extends JavaPlugin {
     private final EPCoreLogger coreLogger = new EPCoreLogger(ChatColor.GRAY, LogLevel.INFO);
     private final DatabaseManager databaseManager = new DatabaseManager(this);
     private final EconomyHandler economyHandler = new EconomyHandler(this);
+    private final SettingsHandler settingsHandler = new SettingsHandler(this);
     private final UserHandler userHandler = new UserHandler(this);
 
     // Configuration
@@ -58,6 +60,14 @@ public final class EPCore extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+
+        // Set up Settings handler...
+        if (!settingsHandler.setup()) {
+            getCoreLogger().log(LogLevel.FATAL, "Settings Manager failed to set up for EPCore, disabling...");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
 
         // Load all the default tables.
         databaseManager.loadDefaultTables();

@@ -88,12 +88,6 @@ public class DatabaseManager {
                 .addColumn("uuid", SQLDataType.VARCHAR, 32, false, SQLDefaultType.NO_DEFAULT, true)
                 .addColumn("name", SQLDataType.VARCHAR, 100, false, SQLDefaultType.NO_DEFAULT, false)
                 .build();
-
-        TableBuilder.newTable("settings", this)
-                .addColumn("uuid", SQLDataType.VARCHAR, 32, false, SQLDefaultType.NO_DEFAULT, true)
-                .addColumn("setting", SQLDataType.VARCHAR, 100, false, SQLDefaultType.NO_DEFAULT, false)
-                .addColumn("value", SQLDataType.VARCHAR, 100, true, SQLDefaultType.NO_DEFAULT, false)
-                .build();
     }
 
     public boolean update(@NotNull String table, @NotNull Map<String, Object> data, @NotNull Map<String, Object> whereData) {
