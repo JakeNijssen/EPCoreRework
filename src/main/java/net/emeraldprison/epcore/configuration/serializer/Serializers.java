@@ -1,6 +1,7 @@
 package net.emeraldprison.epcore.configuration.serializer;
 
 import net.emeraldprison.epcore.configuration.serializer.implementations.*;
+import net.emeraldprison.epcore.settings.Setting;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -20,6 +21,7 @@ public class Serializers {
         register(Location.class, new LocationSerializer());
         register(ItemStack.class, new ItemStackSerializer());
         register(Material.class, new MaterialSerializer());
+        register(Setting.class, new SettingSerializer());
     }
 
     public static <T> Serializer<T> of(Class<T> clazz) {
