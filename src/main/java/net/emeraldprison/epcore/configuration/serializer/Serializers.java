@@ -1,10 +1,8 @@
 package net.emeraldprison.epcore.configuration.serializer;
 
-import net.emeraldprison.epcore.configuration.serializer.implementations.ItemStackSerializer;
-import net.emeraldprison.epcore.configuration.serializer.implementations.LocationSerializer;
-import net.emeraldprison.epcore.configuration.serializer.implementations.UniversalArraySerializer;
-import net.emeraldprison.epcore.configuration.serializer.implementations.UniversalObjectSerializer;
+import net.emeraldprison.epcore.configuration.serializer.implementations.*;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.Serializable;
@@ -21,6 +19,7 @@ public class Serializers {
     static {
         register(Location.class, new LocationSerializer());
         register(ItemStack.class, new ItemStackSerializer());
+        register(Material.class, new MaterialSerializer());
     }
 
     public static <T> Serializer<T> of(Class<T> clazz) {

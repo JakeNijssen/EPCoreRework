@@ -37,11 +37,12 @@ public class SettingsGUI extends SimpleMenu {
             Setting setting = settingList.get(index);
             boolean enabled = settingMap.get(settingList.get(index));
 
-            ItemStack settingItemStack = ItemBuilder.item(enabled ? Material.LIME_DYE : Material.GRAY_DYE)
+            ItemStack settingItemStack = ItemBuilder.item(setting.getType())
                     .name(setting.getDisplayName())
-                    .setLore(setting.getDescription())
                     .addLore(" ")
-                    .addLore((enabled ? "&c" : "&a") + "Click to " + (enabled ? "disable" : "enable") + " this option.")
+                    .addLore(setting.getDescription().toArray(new String[0]))
+                    .addLore(" ")
+                    .addLore("&f&nClick to toggle " + setting.getToggleMessage())
                     .build();
 
             setItem(slots[index], settingItemStack, (event) -> {

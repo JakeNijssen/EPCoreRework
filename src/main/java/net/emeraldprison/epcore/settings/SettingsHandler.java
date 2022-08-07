@@ -9,6 +9,7 @@ import net.emeraldprison.epcore.database.utilities.TableBuilder;
 import net.emeraldprison.epcore.users.object.CoreUser;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
@@ -55,12 +56,7 @@ public class SettingsHandler {
             if (settingSection == null)
                 continue;
 
-            String displayName = settingSection.getString("display-name");
-            List<String> description = settingSection.getStringList("description");
-            boolean confirmation = settingSection.getBoolean("confirmation");
-            boolean defaultEnabled = settingSection.getBoolean("defaultEnabled");
-
-            settings.add(new Setting(configSetting, displayName, description, confirmation, defaultEnabled));
+            settings.add(settingsConfiguration.get("settings." + configSetting, Setting.class));
         }
 
         settings.forEach(setting -> this.settings.put(setting.getName(), setting));

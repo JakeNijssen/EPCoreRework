@@ -56,8 +56,9 @@ public class HikariSQLService extends SQLService {
         if (dataSourceTwo == null)
             generateNewDataSource(false);
 
-        // TODO: Return the one with no connections.
-        return dataSourceOne;
+        return dataSourceOne.getHikariPoolMXBean().getIdleConnections() <= 0
+                ? dataSourceTwo
+                : dataSourceOne;
     }
 
     private void generateNewDataSource(boolean sourceOne) {

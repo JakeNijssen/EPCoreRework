@@ -7,7 +7,6 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -64,6 +63,13 @@ public abstract class BasicBuilder<B extends BasicBuilder<B>> {
         if (itemMeta == null) return this.getThis();
         List<String> currentLore = itemMeta.getLore();
         currentLore.add(Utilities.translate(line));
+        return setLore(currentLore);
+    }
+
+    public B addLore(String... lines) {
+        if (itemMeta == null) return this.getThis();
+        List<String> currentLore = itemMeta.getLore();
+        currentLore.addAll(Utilities.translate(Arrays.asList(lines)));
         return setLore(currentLore);
     }
 

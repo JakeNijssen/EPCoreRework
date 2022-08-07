@@ -12,13 +12,14 @@ import net.emeraldprison.epcore.inventory.menu.SimpleMenu;
 import net.emeraldprison.epcore.inventory.utilities.InventorySize;
 import net.emeraldprison.epcore.settings.SettingsHandler;
 import net.emeraldprison.epcore.settings.inventory.SettingsGUI;
+import net.emeraldprison.epcore.statistics.StatisticsHandler;
 import net.emeraldprison.epcore.users.UserHandler;
 import net.emeraldprison.epcore.users.listeners.UserJoinListener;
 import net.emeraldprison.epcore.users.listeners.UserQuitListener;
 import net.emeraldprison.epcore.utilities.builder.ItemBuilder;
 import net.emeraldprison.epcore.utilities.logging.EPCoreLogger;
 import net.emeraldprison.epcore.utilities.logging.LogLevel;
-import net.md_5.bungee.api.ChatColor;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -39,6 +40,7 @@ public final class EPCore extends JavaPlugin {
     private final DatabaseManager databaseManager = new DatabaseManager(this);
     private final EconomyHandler economyHandler = new EconomyHandler(this);
     private final SettingsHandler settingsHandler = new SettingsHandler(this);
+    private final StatisticsHandler statisticsHandler = new StatisticsHandler(this);
     private final InventoryHandler inventoryHandler = new InventoryHandler(this);
     private final UserHandler userHandler = new UserHandler(this);
 
@@ -75,11 +77,16 @@ public final class EPCore extends JavaPlugin {
         }
 
         if (!inventoryHandler.setup()) {
-            getCoreLogger().log(LogLevel.FATAL, "Settings Manager failed to set up for EPCore, disabling...");
+            getCoreLogger().log(LogLevel.FATAL, "Inventory Manager failed to set up for EPCore, disabling...");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
+        if (!statisticsHandler.setup()) {
+            getCoreLogger().log(LogLevel.FATAL, "Statistics Manager failed to set up for EPCore, disabling...");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
 
         // Load all the default tables.
         databaseManager.loadDefaultTables();
@@ -89,13 +96,6 @@ public final class EPCore extends JavaPlugin {
                 new UserJoinListener(),
                 new UserQuitListener()
         );
-
-        getCommand("settings").setExecutor((sender, command, label, args) -> {
-            SettingsGUI settingsGUI = new SettingsGUI((Player) sender);
-            settingsGUI.open();
-
-            return true;
-        });
     }
 
     @Override

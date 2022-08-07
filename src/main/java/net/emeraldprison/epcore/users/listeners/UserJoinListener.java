@@ -3,6 +3,8 @@ package net.emeraldprison.epcore.users.listeners;
 import net.emeraldprison.epcore.EPCore;
 import net.emeraldprison.epcore.api.events.user.UserLoadEvent;
 import net.emeraldprison.epcore.settings.Setting;
+import net.emeraldprison.epcore.statistics.objects.Statistic;
+import net.emeraldprison.epcore.statistics.objects.StatisticType;
 import net.emeraldprison.epcore.users.UserHandler;
 import net.emeraldprison.epcore.users.object.CoreUser;
 import org.bukkit.Bukkit;
@@ -31,12 +33,16 @@ public class UserJoinListener implements Listener {
                             Map<Setting, Boolean> settings = EPCore.getPlugin().getSettingsHandler()
                                     .retrieveSettings(event.getUniqueId());
 
+                            Map<StatisticType, Statistic> statistics = EPCore.getPlugin().getStatisticsHandler()
+                                    .retrieveStatistics(event.getUniqueId());
+
                             coreUser = new CoreUser(
                                     event.getUniqueId(),
                                     event.getName(),
                                     UserLoadEvent.UserLoadType.NEW
                             );
 
+                            coreUser.setStatistics(statistics);
                             coreUser.setSettings(settings);
 
                             CoreUser finalUser = coreUser;

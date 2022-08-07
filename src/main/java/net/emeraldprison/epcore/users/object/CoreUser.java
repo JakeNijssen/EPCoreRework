@@ -5,6 +5,8 @@ import lombok.Setter;
 import net.emeraldprison.epcore.EPCore;
 import net.emeraldprison.epcore.api.events.user.UserLoadEvent;
 import net.emeraldprison.epcore.settings.Setting;
+import net.emeraldprison.epcore.statistics.objects.Statistic;
+import net.emeraldprison.epcore.statistics.objects.StatisticType;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +25,9 @@ public class CoreUser {
 
     @Setter
     private Map<Setting, Boolean> settings;
+
+    @Setter
+    private Map<StatisticType, Statistic> statistics;
 
     private UserLoadEvent.UserLoadType loadType;
 
@@ -50,6 +55,7 @@ public class CoreUser {
         }
 
         EPCore.getPlugin().getSettingsHandler().saveSettingsForUser(this);
+        EPCore.getPlugin().getStatisticsHandler().saveStatisticsForUser(this);
         EPCore.getPlugin().getUserHandler().updateUserTable(getPlayer(), this);
         EPCore.getPlugin().getUserHandler().getUsers().remove(uuid);
     }
@@ -63,6 +69,9 @@ public class CoreUser {
         EPCore.getPlugin().getUserHandler().getUsers().remove(getUuid());
     }
 
+    public Statistic getStatistic(StatisticType statisticType){
+        return this.statistics.get(statisticType);
+    }
 
     private boolean isOnline() {
         return getPlayer() != null && getPlayer().isOnline();
