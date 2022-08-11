@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.wolfeiii'
-version = '1.1.4'
+version = '1.1.5'
 archivesBaseName = 'EPCore'
 
 repositories {
@@ -22,10 +22,6 @@ repositories {
     maven {
         name = 'jitpack'
         url = 'https://jitpack.io'
-    }
-
-    maven {
-        url "https://wolfeiii.com/releases"
     }
 
     maven {
