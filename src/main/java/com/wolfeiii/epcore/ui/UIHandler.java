@@ -5,6 +5,7 @@ import com.wolfeiii.epcore.ui.actionbar.ActionBarHandler;
 import com.wolfeiii.epcore.ui.bossbar.BossBarHandler;
 import com.wolfeiii.epcore.utilities.logging.LogLevel;
 import lombok.Getter;
+import org.checkerframework.checker.units.qual.A;
 import org.jetbrains.annotations.NotNull;
 
 public class UIHandler {
@@ -16,16 +17,6 @@ public class UIHandler {
 
     public UIHandler(@NotNull EPCore core) {
         this.core = core;
-
-        initializeActionBarHandler();
-    }
-
-    public void initializeActionBarHandler() {
-        try {
-            actionBarHandler = new ActionBarHandler(core);
-        } catch (IllegalAccessException exception) {
-            core.getCoreLogger().log(LogLevel.WARN, exception.getMessage());
-            actionBarHandler = null;
-        }
+        this.actionBarHandler = new ActionBarHandler(core);
     }
 }

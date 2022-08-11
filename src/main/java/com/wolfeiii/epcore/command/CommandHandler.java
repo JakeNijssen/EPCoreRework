@@ -8,6 +8,7 @@ import cloud.commandframework.extra.confirmation.CommandConfirmationManager;
 import cloud.commandframework.paper.PaperCommandManager;
 import com.wolfeiii.epcore.EPCore;
 import com.wolfeiii.epcore.command.implementations.SettingsCommand;
+import com.wolfeiii.epcore.ui.bossbar.BossBarHandler;
 import com.wolfeiii.epcore.utilities.Utilities;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
