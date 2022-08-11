@@ -1,10 +1,12 @@
 plugins {
+    id 'maven-publish'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
     id 'java'
 }
 
 group = 'com.wolfeiii'
-version = '1.1.0'
+version = '1.1.2'
+archivesBaseName = 'EPCore'
 
 repositories {
     mavenCentral()
@@ -46,12 +48,18 @@ dependencies {
 
 tasks {
     shadowJar {
+        archiveClassifier.set('')
         relocate 'com.zaxxer', 'com.wolfeiii.epcore.libs.com.zaxxer'
+        relocate 'cloud.commandframework', 'com.wolfeiii.epcore.libs.cloud.commandframework'
     }
 
     build {
         dependsOn(shadowJar)
     }
+}
+
+artifacts {
+    archives shadowJar
 }
 
 def targetJavaVersion = 17
