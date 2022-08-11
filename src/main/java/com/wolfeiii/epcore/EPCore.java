@@ -8,6 +8,7 @@ import com.wolfeiii.epcore.economy.EconomyHandler;
 import com.wolfeiii.epcore.inventory.InventoryHandler;
 import com.wolfeiii.epcore.inventory.listener.InventoryListener;
 import com.wolfeiii.epcore.settings.SettingsHandler;
+import com.wolfeiii.epcore.ui.UIHandler;
 import com.wolfeiii.epcore.users.UserHandler;
 import com.wolfeiii.epcore.utilities.logging.LogLevel;
 import lombok.Getter;
@@ -37,6 +38,7 @@ public final class EPCore extends JavaPlugin {
     private final StatisticsHandler statisticsHandler = new StatisticsHandler(this);
     private final InventoryHandler inventoryHandler = new InventoryHandler(this);
     private final UserHandler userHandler = new UserHandler(this);
+    private final UIHandler uiHandler = new UIHandler(this);
 
     // Configuration
     private final Configuration configuration = new Configuration(this, new File(getDataFolder(), "config.yml"), NameStyle.HYPHEN, true);

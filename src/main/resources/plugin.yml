@@ -1,6 +1,6 @@
 name: EPCore
 version: '${version}'
-main: net.emeraldprison.epcore.EPCore
+main: com.wolfeiii.epcore.EPCore
 api-version: 1.19
 depend: [ PlaceholderAPI, WorldGuard, Vault, ActionBarAPI ]
 softdepend: [ PlugMan ]

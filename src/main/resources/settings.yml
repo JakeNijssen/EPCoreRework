@@ -1,6 +1,6 @@
 settings:
   private-messages:
-    type: 'net.emeraldprison.epcore.settings.Setting'
+    type: 'com.wolfeiii.epcore.settings.Setting'
     material:
       type: "PAPER"
       color: "BLUE"
