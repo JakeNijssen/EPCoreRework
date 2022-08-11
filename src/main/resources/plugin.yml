@@ -7,7 +7,3 @@ softdepend: [ PlugMan ]
 authors: [ Wolfeiii ]
 description: The core plugin for the prison server EmeraldPrison. Rewritten by Wolfeiii.
 website: https://emeraldprison.net
-
-commands:
-  settings:
-    description: "Settings"

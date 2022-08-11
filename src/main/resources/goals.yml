@@ -1,0 +1,7 @@
+goals:
+  block-break-one:
+    display-name: "Block Break 1"
+    type: "BLOCKS_MINED"
+    goal: 25
+    rewards:
+      - 'eco give %player% 25000'
